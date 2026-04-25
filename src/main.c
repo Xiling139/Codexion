@@ -3,20 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zhenming <zhewu@student.42tokyo.jp>        +#+  +:+       +#+        */
+/*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 14:35:11 by zhewu             #+#    #+#             */
-/*   Updated: 2026/04/24 17:35:20 by zhenming         ###   ########.fr       */
+/*   Updated: 2026/04/25 11:57:06 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
-
-void	*send_msg(void *arg)
-{
-	printf("%s\n", (char *)arg);
-	return (NULL);
-}
 
 int	check_args(char *argv[])
 {
@@ -26,7 +20,11 @@ int	check_args(char *argv[])
 	i = 1;
 	while (i < 8)
 	{
+		if (strlen(argv[i]) == 0)
+			return (empty_argument_error());
 		if (!is_number(argv[i]))
+			return (argument_type_error(i));
+		if (atoi(argv[i]) < 0)
 			return (argument_type_error(i));
 		i++;
 	}
@@ -70,8 +68,6 @@ t_config	setup_config(char *argv[])
 
 int	main(int argc, char *argv[])
 {
-	pthread_t	thread1;
-	pthread_t	thread2;
 	t_config	config;
 
 	if (argc != 9)
@@ -81,10 +77,6 @@ int	main(int argc, char *argv[])
 	config = setup_config(argv);
 	if (config.scheduler == -1)
 		return (-1);
-	pthread_create(&thread1, NULL, send_msg, (void *)"Thread1 is running.");
-	pthread_create(&thread2, NULL, send_msg, (void *)"Thread2 is running.");
-	pthread_join(thread1, NULL);
-	pthread_join(thread2, NULL);
-	printf("Both threads end\n");
+	setup(config);
 	return (0);
 }

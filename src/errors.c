@@ -6,16 +6,23 @@
 /*   By: zhenming <zhewu@student.42tokyo.jp>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 16:59:19 by zhenming          #+#    #+#             */
-/*   Updated: 2026/04/24 17:09:21 by zhenming         ###   ########.fr       */
+/*   Updated: 2026/04/25 10:37:59 by zhenming         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
+int	empty_argument_error(void)
+{
+	fprintf(stderr, "Invalid argument.\n");
+	fprintf(stderr, "Argument must not be empty.\n");
+	return (-1);
+}
+
 int	argument_count_error(int argc)
 {
 	fprintf(stderr, "Invalid argument format.\n");
-	fprintf(stderr, "Received %d arguments, but 8 are required.\n", argc - 1);
+	fprintf(stderr, "Received %d arguments, but 8 are expected.\n", argc - 1);
 	return (-1);
 }
 
