@@ -81,10 +81,11 @@ int	setup(t_config config)
 	while (i < config.number_of_coders)
 	{
 		working_hub->thread_id = i;
-		pthread_create(&coders[i], NULL, coder, (void *)&working_hub);
+		pthread_create(&coders[i], NULL, coder, (void *)working_hub);
+		usleep(1000);
 		i++;
 	}
-	pthread_create(&monitor, NULL, monitor_run, (void *)&working_hub);
+	pthread_create(&monitor, NULL, monitor_run, (void *)working_hub);
 	wait_threads(coders, monitor, config.number_of_coders);
 	free_hub(working_hub);
 	return (0);

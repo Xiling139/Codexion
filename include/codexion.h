@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 16:09:31 by zhenming          #+#    #+#             */
-/*   Updated: 2026/04/25 16:35:09 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/05/08 16:16:55 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,13 +41,18 @@ typedef struct s_dongle
 
 typedef struct s_hub
 {
-	int				thread_id;
 	struct timeval	start_time;
 	t_config		config;
 	t_dongle		*dongles;
 	pthread_t		*coders;
 	pthread_mutex_t	d_mutex;
 }					t_hub;
+
+typedef struct s_coder_arg
+{
+	int				thread_id;
+	t_hub			hub;
+}					t_coder_arg;
 
 // Core functions
 int					setup(t_config config);
