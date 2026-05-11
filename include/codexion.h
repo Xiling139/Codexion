@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 16:09:31 by zhenming          #+#    #+#             */
-/*   Updated: 2026/05/08 16:16:55 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/05/11 18:03:45 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,25 +33,19 @@ typedef struct s_config
 	int				scheduler;
 }					t_config;
 
-typedef struct s_dongle
-{
-	int				cd_end;
-	bool			available;
-}					t_dongle;
-
 typedef struct s_hub
 {
 	struct timeval	start_time;
 	t_config		config;
-	t_dongle		*dongles;
 	pthread_t		*coders;
 	pthread_mutex_t	d_mutex;
+	int				free_dongles;
 }					t_hub;
 
 typedef struct s_coder_arg
 {
 	int				thread_id;
-	t_hub			hub;
+	t_hub			*hub;
 }					t_coder_arg;
 
 // Core functions

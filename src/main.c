@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 14:35:11 by zhewu             #+#    #+#             */
-/*   Updated: 2026/04/25 11:57:06 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/05/11 16:07:13 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ int	main(int argc, char *argv[])
 	config = setup_config(argv);
 	if (config.scheduler == -1)
 		return (-1);
-	setup(config);
+	if (setup(config) == -1)
+		return (-1);
 	return (0);
 }
