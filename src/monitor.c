@@ -17,5 +17,6 @@ void	*monitor_run(void *arg)
 	t_hub	*hub;
 
 	hub = (t_hub *)arg;
+	(void)hub;
 	return (NULL);
 }

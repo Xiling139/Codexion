@@ -75,7 +75,6 @@ int	setup(t_config config)
 	while (i < config.number_of_coders)
 	{
 		pthread_create(&threads[i], NULL, coder, (void *)&args[i]);
-		usleep(1000);
 		i++;
 	}
 	pthread_create(&threads[i], NULL, monitor_run, (void *)&args[i]);

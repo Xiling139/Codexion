@@ -39,6 +39,7 @@ typedef struct s_hub
 	t_config		config;
 	pthread_t		*coders;
 	pthread_mutex_t	d_mutex;
+	pthread_cond_t	cv;
 	int				free_dongles;
 }					t_hub;
 
@@ -65,6 +66,6 @@ bool				is_number(char *str);
 char				*str_to_upper(char *str);
 
 // Thread utils
-bool				compile_available(t_hub *hub);
+long long 			gettime_ms(struct timeval origin);
 
 #endif

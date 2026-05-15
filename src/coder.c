@@ -12,33 +12,31 @@
 
 #include "codexion.h"
 
-void	grab_dongle(t_hub *hub, int id)
+void	compile(t_hub *hub, int id)
 {
-	struct timeval	tv;
-	time_t			secdiff;
-	suseconds_t		usecdiff;
-	time_t			timediff;
-
-	if (hub->free_dongles > 0)
-	{
-		gettimeofday(&tv, NULL);
-		secdiff = tv.tv_sec - hub->start_time.tv_sec;
-		usecdiff = tv.tv_usec - hub->start_time.tv_usec;
-		timediff = secdiff * 1000 + usecdiff / 1000;
-		printf("%ld %d has taken a dongle\n", timediff, id);
-		hub->free_dongles--;
-	}
+	long long	timediff;
+	
+	timediff = gettime_ms(hub->start_time);
+	printf("%lld %d has taken a dongle\n", timediff, id);
+	hub->free_dongles--;
+	timediff = gettime_ms(hub->start_time);
+	printf("%lld %d has released a dongle\n", timediff, id);
+	hub->free_dongles++;
+	timediff = gettime_ms(hub->start_time);
+	printf("%lld %d is compiling\n", timediff, id);
+	usleep(hub->config.time_to_compile * 1000);
 }
 
-void	release_dongle(t_hub *hub, int id)
+void	debug_and_refactor(t_hub *hub, int id)
 {
-	struct timeval	tv;
-	suseconds_t		time;
+	long long	timediff;
 
-	gettimeofday(&tv, NULL);
-	time = (tv.tv_usec - hub->start_time.tv_usec) / 1000;
-	printf("%ld %d has released a dongle\n", time, id);
-	hub->free_dongles++;
+	timediff = gettime_ms(hub->start_time);
+	printf("%lld %d is debugging\n", timediff, id);
+	usleep(hub->config.time_to_debug * 1000);
+	timediff = gettime_ms(hub->start_time);
+	printf("%lld %d is refactoring\n", timediff, id);
+	usleep(hub->config.time_to_refactor * 1000);
 }
 
 void	main_loop(t_hub *hub, int tid)
@@ -49,14 +47,11 @@ void	main_loop(t_hub *hub, int tid)
 	while (loops < hub->config.number_of_compiles_required)
 	{
 		pthread_mutex_lock(&hub->d_mutex);
-		grab_dongle(hub, tid);
-		grab_dongle(hub, tid);
+		while(hub->free_dongles < 2)
+			pthread_cond_wait(&hub->cv, &hub->d_mutex);
+		compile(hub, tid);
 		pthread_mutex_unlock(&hub->d_mutex);
-		usleep(hub->config.time_to_compile * 1000);
-		pthread_mutex_lock(&hub->d_mutex);
-		release_dongle(hub, tid);
-		release_dongle(hub, tid);
-		pthread_mutex_unlock(&hub->d_mutex);
+		debug_and_refactor(hub, tid);
 		loops++;
 	}
 }
