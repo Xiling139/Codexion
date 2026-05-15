@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 16:09:31 by zhenming          #+#    #+#             */
-/*   Updated: 2026/05/11 18:03:45 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/05/15 16:15:34 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,21 @@ typedef struct s_config
 	int				scheduler;
 }					t_config;
 
+typedef struct s_dongle
+{
+	bool			available;
+	long long		t_unlock_ms;
+	int				id;
+}					t_dongle;
+
 typedef struct s_hub
 {
 	struct timeval	start_time;
+	t_dongle		*dongles;
 	t_config		config;
 	pthread_t		*coders;
 	pthread_mutex_t	d_mutex;
 	pthread_cond_t	cv;
-	int				free_dongles;
 }					t_hub;
 
 typedef struct s_coder_arg
@@ -66,6 +73,8 @@ bool				is_number(char *str);
 char				*str_to_upper(char *str);
 
 // Thread utils
-long long 			gettime_ms(struct timeval origin);
+long long			gettime_ms(struct timeval origin);
+bool				compile_available(t_hub *hub, int tid);
+void				d_release(t_hub *hub, int tid);
 
 #endif

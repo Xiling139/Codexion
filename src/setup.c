@@ -24,6 +24,27 @@ void	wait_threads(pthread_t *threads, int amount)
 	}
 }
 
+t_dongle	*dongle_initialize(t_config config)
+{
+	t_dongle	*dongles;
+	int			size;
+	int			i;
+
+	size = config.number_of_coders;
+	dongles = (t_dongle *)malloc(sizeof(t_dongle) * size);
+	if (!dongles)
+		return (NULL);
+	i = 0;
+	while (i < size)
+	{
+		dongles[i].available = true;
+		dongles[i].id = i;
+		dongles[i].t_unlock_ms = -1;
+		i++;
+	}
+	return (dongles);
+}
+
 t_coder_arg	*hub_setup(t_config config, pthread_t *coders, int size)
 {
 	t_coder_arg	*args;
@@ -36,7 +57,9 @@ t_coder_arg	*hub_setup(t_config config, pthread_t *coders, int size)
 		return (NULL);
 	hub->config = config;
 	hub->coders = coders;
-	hub->free_dongles = config.number_of_coders;
+	pthread_mutex_init(&hub->d_mutex, NULL);
+	pthread_cond_init(&hub->cv, NULL);
+	hub->dongles = dongle_initialize(config);
 	i = 0;
 	while (i < size)
 	{
@@ -47,12 +70,15 @@ t_coder_arg	*hub_setup(t_config config, pthread_t *coders, int size)
 	return (args);
 }
 
-void	free_resource(t_coder_arg *args)
+void	release(t_coder_arg *args)
 {
 	t_hub	*hub;
 
 	hub = args->hub;
+	free(hub->dongles);
 	free(hub->coders);
+	pthread_mutex_destroy(&hub->d_mutex);
+	pthread_cond_destroy(&hub->cv);
 	free(hub);
 	free(args);
 }
@@ -79,6 +105,6 @@ int	setup(t_config config)
 	}
 	pthread_create(&threads[i], NULL, monitor_run, (void *)&args[i]);
 	wait_threads(threads, size);
-	free_resource(args);
+	release(args);
 	return (0);
 }
