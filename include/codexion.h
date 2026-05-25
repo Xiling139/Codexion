@@ -42,6 +42,7 @@ typedef struct s_dongle
 
 typedef struct s_hub
 {
+	int				*burnout_time;
 	struct timeval	start_time;
 	t_dongle		*dongles;
 	t_config		config;
