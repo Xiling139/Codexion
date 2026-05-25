@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 16:09:31 by zhenming          #+#    #+#             */
-/*   Updated: 2026/05/15 16:15:34 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/05/25 16:25:06 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ int					empty_argument_error(void);
 // Util functions
 bool				is_number(char *str);
 char				*str_to_upper(char *str);
+int					*init_int_arr(t_config config);
 
 // Thread utils
 long long			gettime_ms(struct timeval origin);

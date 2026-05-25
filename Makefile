@@ -1,5 +1,5 @@
 NAME    := codexion
-CC		:= cc
+CC		:= cc -g
 CFLAGS  := -Wall -Wextra -Werror -pthread
 RM      := rm -rf
 INC		:= -I include

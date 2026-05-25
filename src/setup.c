@@ -12,18 +12,6 @@
 
 #include "codexion.h"
 
-void	wait_threads(pthread_t *threads, int amount)
-{
-	int	i;
-
-	i = 0;
-	while (i < amount)
-	{
-		pthread_join(threads[i], NULL);
-		i++;
-	}
-}
-
 t_dongle	*dongle_initialize(t_config config)
 {
 	t_dongle	*dongles;
@@ -60,6 +48,7 @@ t_coder_arg	*hub_setup(t_config config, pthread_t *coders, int size)
 	pthread_mutex_init(&hub->d_mutex, NULL);
 	pthread_cond_init(&hub->cv, NULL);
 	hub->dongles = dongle_initialize(config);
+	hub->burnout_time = init_int_arr(config);
 	i = 0;
 	while (i < size)
 	{
@@ -104,7 +93,7 @@ int	setup(t_config config)
 		i++;
 	}
 	pthread_create(&threads[i], NULL, monitor_run, (void *)&args[i]);
-	wait_threads(threads, size);
+	pthread_join(threads[config.number_of_coders], NULL);
 	release(args);
 	return (0);
 }

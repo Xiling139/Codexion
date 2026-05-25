@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 16:53:51 by zhenming          #+#    #+#             */
-/*   Updated: 2026/04/25 10:44:21 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/05/25 16:24:53 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,4 +57,23 @@ char	*str_to_upper(char *str)
 	}
 	new_str[i] = '\0';
 	return (new_str);
+}
+
+int	*init_int_arr(t_config config)
+{
+	int	*arr;
+	int	size;
+	int	i;
+
+	size = config.number_of_coders;
+	arr = (int *)malloc(sizeof(int) * size);
+	if (!arr)
+		return (NULL);
+	i = 0;
+	while (i < size)
+	{
+		arr[i] = config.time_to_burnout;
+		i++;
+	}
+	return (arr);
 }

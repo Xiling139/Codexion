@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/25 11:37:20 by zhewu             #+#    #+#             */
-/*   Updated: 2026/05/15 17:17:32 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/05/25 16:53:19 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ void	compile(t_hub *hub, int id)
 	hub->dongles[id % size].available = false;
 	timediff = gettime_ms(hub->start_time);
 	printf("%lld %d is compiling\n", timediff, id);
+	hub->burnout_time[id - 1] = timediff + hub->config.time_to_burnout * 1000;
 }
 
 void	debug_and_refactor(t_hub *hub, int id)
@@ -65,6 +66,7 @@ void	main_loop(t_hub *hub, int tid)
 		d_release(hub, tid);
 		debug_and_refactor(hub, tid);
 	}
+	hub->burnout_time[tid - 1] = -1;
 }
 
 void	*coder(void *arg)
