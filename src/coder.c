@@ -6,65 +6,63 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/25 11:37:20 by zhewu             #+#    #+#             */
-/*   Updated: 2026/05/25 16:53:19 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/05/30 15:37:12 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-void	compile(t_hub *hub, int id)
+int	grab_dongle(t_hub *hub, int tid)
 {
-	long long	timediff;
+	long long	time_ms;
 	int			size;
+	int			grabbed;
 
+	grabbed = 0;
 	size = hub->config.number_of_coders;
-	timediff = gettime_ms(hub->start_time);
-	printf("%lld %d has taken a dongle\n", timediff, id);
-	hub->dongles[id - 1].available = false;
-	timediff = gettime_ms(hub->start_time);
-	printf("%lld %d has taken a dongle\n", timediff, id);
-	hub->dongles[id % size].available = false;
-	timediff = gettime_ms(hub->start_time);
-	printf("%lld %d is compiling\n", timediff, id);
-	hub->burnout_time[id - 1] = timediff + hub->config.time_to_burnout * 1000;
-}
-
-void	debug_and_refactor(t_hub *hub, int id)
-{
-	long long	timediff;
-
-	timediff = gettime_ms(hub->start_time);
-	printf("%lld %d is debugging\n", timediff, id);
-	usleep(hub->config.time_to_debug * 1000);
-	timediff = gettime_ms(hub->start_time);
-	printf("%lld %d is refactoring\n", timediff, id);
-	usleep(hub->config.time_to_refactor * 1000);
+	if (dongle_available(hub, tid - 1))
+	{
+		time_ms = gettime_ms(hub->start_time);
+		hub->dongles[tid - 1].available = false;
+		pthread_mutex_lock(&hub->p_mutex);
+		print_logs(hub, 0, tid);
+		pthread_mutex_unlock(&hub->p_mutex);
+		grabbed++;
+	}
+	if (dongle_available(hub, tid % size))
+	{
+		time_ms = gettime_ms(hub->start_time);
+		hub->dongles[tid % size].available = false;
+		pthread_mutex_lock(&hub->p_mutex);
+		print_logs(hub, 0, tid);
+		pthread_mutex_unlock(&hub->p_mutex);
+		grabbed++;
+	}
+	return (grabbed);
 }
 
 void	main_loop(t_hub *hub, int tid)
 {
-	int		loops;
-	bool	grabbed;
+	int	loops;
+	int	grabbed;
 
-	grabbed = false;
 	loops = 0;
 	while (loops < hub->config.number_of_compiles_required)
 	{
-		grabbed = false;
-		while (grabbed == false)
+		grabbed = 0;
+		while (grabbed < 2)
 		{
+			if (hub->termination_signal == 1)
+				break ;
 			pthread_mutex_lock(&hub->d_mutex);
-			if (compile_available(hub, tid))
-			{
-				compile(hub, tid);
-				loops++;
-				grabbed = true;
-			}
+			if (hub->config.scheduler == 0)
+				grabbed += grab_dongle(hub, tid);
+			else
+				grabbed += check_dongle(hub, tid);
 			pthread_mutex_unlock(&hub->d_mutex);
 		}
-		usleep(hub->config.time_to_compile * 1000);
-		d_release(hub, tid);
-		debug_and_refactor(hub, tid);
+		coder_action(hub, tid);
+		loops++;
 	}
 	hub->burnout_time[tid - 1] = -1;
 }

@@ -28,27 +28,46 @@ t_dongle	*dongle_initialize(t_config config)
 		dongles[i].available = true;
 		dongles[i].id = i;
 		dongles[i].t_unlock_ms = -1;
+		pthread_cond_init(&dongles[i].cv_dongle, NULL);
 		i++;
 	}
 	return (dongles);
 }
 
-t_coder_arg	*hub_setup(t_config config, pthread_t *coders, int size)
+t_hub	*hub_setup(t_config config, pthread_t *coders)
+{
+	t_hub	*hub;
+
+	hub = (t_hub *)malloc(sizeof(t_hub));
+	if (!hub)
+		return (NULL);
+	if (gettimeofday(&hub->start_time, NULL) == -1)
+		return (NULL);
+	hub->config = config;
+	hub->coders = coders;
+	hub->termination_signal = 0;
+	pthread_mutex_init(&hub->d_mutex, NULL);
+	pthread_mutex_init(&hub->p_mutex, NULL);
+	pthread_cond_init(&hub->cv, NULL);
+	hub->dongles = dongle_initialize(config);
+	hub->burnout_time = init_int_arr(config);
+	if (hub->dongles == NULL || hub->burnout_time == NULL)
+		return (NULL);
+	return (hub);
+}
+
+t_coder_arg	*arg_setup(t_config config, pthread_t *coders, int size)
 {
 	t_coder_arg	*args;
 	t_hub		*hub;
 	int			i;
 
 	args = (t_coder_arg *)malloc(sizeof(t_coder_arg) * (size));
-	hub = (t_hub *)malloc(sizeof(t_hub));
-	if (gettimeofday(&hub->start_time, NULL) == -1)
+	if (!args)
 		return (NULL);
-	hub->config = config;
-	hub->coders = coders;
-	pthread_mutex_init(&hub->d_mutex, NULL);
-	pthread_cond_init(&hub->cv, NULL);
-	hub->dongles = dongle_initialize(config);
-	hub->burnout_time = init_int_arr(config);
+	hub = hub_setup(config, coders);
+	if (!hub)
+		return (NULL);
 	i = 0;
 	while (i < size)
 	{
@@ -62,11 +81,21 @@ t_coder_arg	*hub_setup(t_config config, pthread_t *coders, int size)
 void	release(t_coder_arg *args)
 {
 	t_hub	*hub;
+	int		i;
 
+	i = 0;
 	hub = args->hub;
+	while (i < hub->config.number_of_coders)
+	{
+		pthread_cond_broadcast(&hub->dongles[i].cv_dongle);
+		pthread_cond_destroy(&hub->dongles[i].cv_dongle);
+		i++;
+	}
 	free(hub->dongles);
 	free(hub->coders);
+	free(hub->burnout_time);
 	pthread_mutex_destroy(&hub->d_mutex);
+	pthread_mutex_destroy(&hub->p_mutex);
 	pthread_cond_destroy(&hub->cv);
 	free(hub);
 	free(args);
@@ -83,7 +112,7 @@ int	setup(t_config config)
 	threads = (pthread_t *)malloc(sizeof(pthread_t) * (size));
 	if (!threads)
 		return (-1);
-	args = hub_setup(config, threads, size);
+	args = arg_setup(config, threads, size);
 	if (!args)
 		return (-1);
 	i = 0;
@@ -93,7 +122,7 @@ int	setup(t_config config)
 		i++;
 	}
 	pthread_create(&threads[i], NULL, monitor_run, (void *)&args[i]);
-	pthread_join(threads[config.number_of_coders], NULL);
+	wait_threads(args->hub);
 	release(args);
 	return (0);
 }

@@ -7,9 +7,12 @@ INC		:= -I include
 # directories
 BUILD_DIR 	:=	build
 SRC_DIR		:= 	src
+TEST_DIR	:=	tests
 
 SRCS	:= $(SRC_DIR)/main.c \
 			$(SRC_DIR)/coder.c \
+			$(SRC_DIR)/coder_action.c \
+			$(SRC_DIR)/coderedf.c \
 			$(SRC_DIR)/errors.c \
 			$(SRC_DIR)/monitor.c \
 			$(SRC_DIR)/setup.c \
@@ -30,6 +33,10 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
 
 $(BUILD_DIR):
 		mkdir -p $(BUILD_DIR)
+
+test:
+		cc -o test_codexion $(TEST_DIR)/test_codexion.c
+		./test_codexion
 
 clean:
 		$(RM) $(BUILD_DIR)
