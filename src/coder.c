@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/25 11:37:20 by zhewu             #+#    #+#             */
-/*   Updated: 2026/05/30 15:37:12 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/06/13 12:23:06 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,8 @@ void	main_loop(t_hub *hub, int tid)
 				grabbed += check_dongle(hub, tid);
 			pthread_mutex_unlock(&hub->d_mutex);
 		}
-		coder_action(hub, tid);
+		if (coder_action(hub, tid) == -1)
+			break ;
 		loops++;
 	}
 	hub->burnout_time[tid - 1] = -1;

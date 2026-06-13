@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 16:09:31 by zhenming          #+#    #+#             */
-/*   Updated: 2026/06/13 11:55:51 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/06/13 12:23:02 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int					setup(t_config config);
 // Thread functions
 void				*coder(void *arg);
 void				*monitor_run(void *arg);
-void				coder_action(t_hub *hub, int tid);
+int					coder_action(t_hub *hub, int tid);
 
 // EDF scheduler
 int					check_dongle(t_hub *hub, int tid);

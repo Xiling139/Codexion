@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/29 16:41:06 by zhewu             #+#    #+#             */
-/*   Updated: 2026/05/30 13:48:19 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/06/13 12:21:47 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	refactor(t_hub *hub, int tid)
 	usleep(hub->config.time_to_refactor * 1000);
 }
 
-void	coder_action(t_hub *hub, int tid)
+int	coder_action(t_hub *hub, int tid)
 {
 	int	size;
 
@@ -58,6 +58,13 @@ void	coder_action(t_hub *hub, int tid)
 		pthread_cond_broadcast(&hub->dongles[tid - 1].cv_dongle);
 		pthread_cond_broadcast(&hub->dongles[tid % size].cv_dongle);
 	}
+	if (hub->termination_signal == 1)
+		return (-1);
 	debug(hub, tid);
+	if (hub->termination_signal == 1)
+		return (-1);
 	refactor(hub, tid);
+	if (hub->termination_signal == 1)
+		return (-1);
+	return (0);
 }
