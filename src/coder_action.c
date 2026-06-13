@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/29 16:41:06 by zhewu             #+#    #+#             */
-/*   Updated: 2026/06/13 12:21:47 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/06/13 13:21:37 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,9 @@ int	coder_action(t_hub *hub, int tid)
 
 	size = hub->config.number_of_coders;
 	compile(hub, tid);
+	pthread_mutex_lock(&hub->d_mutex);
 	d_release(hub, tid);
+	pthread_mutex_unlock(&hub->d_mutex);
 	if (hub->config.scheduler == 1)
 	{
 		pthread_cond_broadcast(&hub->dongles[tid - 1].cv_dongle);

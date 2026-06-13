@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/25 11:37:20 by zhewu             #+#    #+#             */
-/*   Updated: 2026/06/13 12:23:06 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/06/13 13:27:34 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,10 +73,12 @@ void	*coder(void *arg)
 	t_coder_arg	*c_arg;
 	t_hub		*hub;
 	int			tid;
+	int			size;
 
 	c_arg = (t_coder_arg *)arg;
 	tid = c_arg->thread_id + 1;
 	hub = c_arg->hub;
+	size = hub->config.number_of_coders;
 	main_loop(hub, tid);
 	return (NULL);
 }
