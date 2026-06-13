@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 16:09:31 by zhenming          #+#    #+#             */
-/*   Updated: 2026/06/13 11:45:33 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/06/13 11:55:51 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ int					check_dongle(t_hub *hub, int tid);
 int					argument_count_error(int argc);
 int					argument_type_error(int arg_num);
 int					empty_argument_error(void);
+int					integer_overflow_error(void);
 
 // Util functions
 bool				is_number(char *str);

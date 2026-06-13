@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 16:53:51 by zhenming          #+#    #+#             */
-/*   Updated: 2026/06/13 11:45:13 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/06/13 11:58:30 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,13 @@ bool	is_number(char *str)
 bool	overflow(char *nbr)
 {
 	char	*int_max_string;
-	int		i;
-	int		*v_cmp;
+	int		v_cmp;
 
 	int_max_string = "2147483647";
-	i = 0;
 	if (nbr[0] == '-')
 		nbr++;
+	if (strlen(nbr) < 10)
+		return (false);
 	v_cmp = strcmp(nbr, int_max_string);
 	if (v_cmp <= 0)
 		return (false);
