@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 16:53:51 by zhenming          #+#    #+#             */
-/*   Updated: 2026/05/25 16:24:53 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/06/13 11:45:13 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,22 @@ bool	is_number(char *str)
 		}
 		i++;
 	}
+	return (true);
+}
+
+bool	overflow(char *nbr)
+{
+	char	*int_max_string;
+	int		i;
+	int		*v_cmp;
+
+	int_max_string = "2147483647";
+	i = 0;
+	if (nbr[0] == '-')
+		nbr++;
+	v_cmp = strcmp(nbr, int_max_string);
+	if (v_cmp <= 0)
+		return (false);
 	return (true);
 }
 

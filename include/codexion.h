@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 16:09:31 by zhenming          #+#    #+#             */
-/*   Updated: 2026/05/30 14:30:19 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/06/13 11:45:33 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ int					empty_argument_error(void);
 
 // Util functions
 bool				is_number(char *str);
+bool				overflow(char *nbr);
 char				*str_to_upper(char *str);
 int					*init_int_arr(t_config config);
 

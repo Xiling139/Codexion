@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   errors.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zhenming <zhewu@student.42tokyo.jp>        +#+  +:+       +#+        */
+/*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 16:59:19 by zhenming          #+#    #+#             */
-/*   Updated: 2026/04/25 10:37:59 by zhenming         ###   ########.fr       */
+/*   Updated: 2026/06/13 11:51:43 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,5 +38,12 @@ int	argument_type_error(int arg_num)
 		fprintf(stderr, "Invalid argument type.\n");
 		fprintf(stderr, "Scheduler must be either 'FIFO' or 'EDF'.\n");
 	}
+	return (-1);
+}
+
+int	integer_overflow_error(void)
+{
+	fprintf(stderr, "Invalid argument.\n");
+	fprintf(stderr, "Integer exceeds its maximum limit.\n");
 	return (-1);
 }
