@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/29 16:41:06 by zhewu             #+#    #+#             */
-/*   Updated: 2026/06/13 13:21:37 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/08/15 13:29:57 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	compile(t_hub *hub, int tid)
 	pthread_mutex_lock(&hub->p_mutex);
 	print_logs(hub, 1, tid);
 	pthread_mutex_unlock(&hub->p_mutex);
-	hub->burnout_time[tid - 1] = time_ms + hub->config.time_to_burnout * 1000;
+	hub->burnout_time[tid - 1] = time_ms + hub->config.time_to_burnout;
 	usleep(hub->config.time_to_compile * 1000);
 }
 

@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 14:35:11 by zhewu             #+#    #+#             */
-/*   Updated: 2026/06/13 11:56:15 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/08/15 12:35:45 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	check_args(char *argv[])
 	{
 		if (strlen(argv[i]) == 0)
 			return (empty_argument_error());
-		if (!is_number(argv[i]) || atoi(argv[i]) <= 0)
+		if (!is_number(argv[i]) || atoi(argv[i]) < 0)
 			return (argument_type_error(i));
 		if (overflow(argv[i]))
 			return (integer_overflow_error());

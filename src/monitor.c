@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/25 11:37:20 by zhewu             #+#    #+#             */
-/*   Updated: 2026/05/30 15:39:02 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/08/15 14:22:10 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ void	*monitor_run(void *arg)
 				hub->config.number_of_coders, -1);
 		time = gettime_ms(hub->start_time);
 		map = min_map(hub->burnout_time, hub->config.number_of_coders);
-		if (map.value < time && map.value <= hub->config.time_to_burnout)
+		if (map.value < time && map.value >= hub->config.time_to_burnout)
 		{
 			pthread_mutex_lock(&hub->p_mutex);
 			printf("%lld %d burned out\n", time, map.index + 1);

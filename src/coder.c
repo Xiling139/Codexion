@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/25 11:37:20 by zhewu             #+#    #+#             */
-/*   Updated: 2026/06/13 13:27:34 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/08/15 13:17:50 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,9 @@ void	main_loop(t_hub *hub, int tid)
 		while (grabbed < 2)
 		{
 			if (hub->termination_signal == 1)
+			{
 				break ;
+			}
 			pthread_mutex_lock(&hub->d_mutex);
 			if (hub->config.scheduler == 0)
 				grabbed += grab_dongle(hub, tid);
