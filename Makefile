@@ -4,6 +4,9 @@ CFLAGS  := -Wall -Wextra -Werror -pthread
 RM      := rm -rf
 INC		:= -I include
 
+# ThreadSanitizer flags for leak check
+TSAN_FLAGS	:=	-fsanitize=leak
+
 # directories
 BUILD_DIR 	:=	build
 SRC_DIR		:= 	src
@@ -29,7 +32,7 @@ $(NAME): $(OBJS)
 all: $(NAME)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
-		$(CC) $(CFLAGS) $(INC) -c $< -o $@
+		$(CC) -g $(CFLAGS) $(INC) -c $< -o $@
 
 $(BUILD_DIR):
 		mkdir -p $(BUILD_DIR)

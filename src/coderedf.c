@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/29 16:30:19 by zhewu             #+#    #+#             */
-/*   Updated: 2026/06/13 13:28:58 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/09/18 11:43:27 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@ bool	is_prioritized(t_hub *hub, int index, int adjacent)
 {
 	if (hub->config.number_of_coders == 1)
 		return (true);
-	if (hub->burnout_time[index] == hub->burnout_time[adjacent])
+	if (hub->burnout_time[index] == hub->burnout_time[adjacent]
+		&& hub->burnout_time[index] == hub->config.time_to_burnout)
 	{
 		if (hub->burnout_time[adjacent] == -1)
 			return (true);

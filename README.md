@@ -112,11 +112,11 @@ The implementation prevents **Coffman's conditions** to prevent deadlock:
 ## Thread Synchronization Mechanisms
 
 ### pthread_mutex_t
-- **Dongle mutexes**: One mutex per dongle protects dongle state (available/cooldown, holder, last_release_time).
+- **Dongle mutexes**: Mutex for dongles protects access to dongle resource.
 - **Log mutex**: Serializes all output to prevent interleaved messages.
 
 ### pthread_cond_t
-- **Dongle prioritization condition variables**: Each dongle has a condvar for waiting coders. When a dongle becomes available or cooldown ends, `pthread_cont_t cv;` is broadcasted.
+- **Dongle prioritization condition variables**: Each dongle has a condvar for waiting coders. When a dongle becomes available or cooldown ends, `pthread_cond_t cv;` is broadcasted.
 
 ### Priority Queue (Custom Heap Implementation)
 - No standard library priority queue is used.
