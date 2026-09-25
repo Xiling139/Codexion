@@ -6,75 +6,54 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/29 16:30:19 by zhewu             #+#    #+#             */
-/*   Updated: 2026/09/18 11:43:27 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/09/25 16:05:38 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-bool	is_prioritized(t_hub *hub, int index, int adjacent)
+long long	calculate_priority(t_hub *hub, int tid, int loops)
 {
-	if (hub->config.number_of_coders == 1)
-		return (true);
-	if (hub->burnout_time[index] == hub->burnout_time[adjacent]
-		&& hub->burnout_time[index] == hub->config.time_to_burnout)
+	int			first_deadline;
+	int			index;
+	long long	burn_out_time;
+
+	first_deadline = hub->config.time_to_burnout;
+	index = tid - 1;
+	burn_out_time = hub->burnout_time[index];
+	if (tid % 2 == 1 && burn_out_time == first_deadline)
 	{
-		if (hub->burnout_time[adjacent] == -1)
-			return (true);
-		else
-			return (index % 2 == 1 || adjacent % 2 == 0);
+		usleep(2000);
+		burn_out_time++;
 	}
-	if (hub->burnout_time[index] > hub->burnout_time[adjacent]
-		&& hub->burnout_time[adjacent] != -1)
-		return (false);
-	return (true);
+	if (loops == 0)
+	{
+		burn_out_time -= hub->config.time_to_compile;
+	}
+	return (burn_out_time);
 }
 
-void	grab_dongle_edf(t_hub *hub, int tid, int index)
+int	acquire_edf(t_hub *hub, int tid, int uid, int loops)
 {
-	long long	time_ms;
-	long long	cd_end_ms;
-	long long	wait_time;
+	int			ret;
+	long long	priority;
+	t_dongle	*dongles;
 
-	cd_end_ms = hub->dongles[index].t_unlock_ms;
-	if (!dongle_available(hub, index))
+	ret = 0;
+	dongles = hub->dongles;
+	pthread_mutex_lock(&dongles[uid].mutex);
+	if (!has_request(&dongles[uid].queue, tid))
 	{
-		time_ms = gettime_ms(hub->start_time);
-		wait_time = cd_end_ms - time_ms;
-		if (wait_time > 0)
-		{
-			usleep(wait_time);
-			return (grab_dongle_edf(hub, tid, index));
-		}
+		priority = calculate_priority(hub, tid, loops);
+		enqueue(&dongles[uid].queue, (t_request){.priority = priority,
+			.tid = tid});
 	}
-	time_ms = gettime_ms(hub->start_time);
-	hub->dongles[index].available = false;
-	pthread_mutex_lock(&hub->p_mutex);
-	print_logs(hub, 0, tid);
-	pthread_mutex_unlock(&hub->p_mutex);
-}
-
-int	check_dongle(t_hub *hub, int tid)
-{
-	int	size;
-	int	grabbed;
-
-	grabbed = 0;
-	size = hub->config.number_of_coders;
-	if (dongle_available(hub, tid - 1))
+	else if (dongle_available(hub, uid) && peek(&dongles[uid].queue).tid == tid)
 	{
-		if (!is_prioritized(hub, tid - 1, (size + tid - 2) % size))
-			pthread_cond_wait(&hub->dongles[tid - 1].cv_dongle, &hub->d_mutex);
-		grab_dongle_edf(hub, tid, tid - 1);
-		grabbed++;
+		dequeue(&dongles[uid].queue);
+		hub->dongles[uid].available = false;
+		ret = 1;
 	}
-	if (dongle_available(hub, tid % size))
-	{
-		if (!is_prioritized(hub, tid - 1, tid % size))
-			pthread_cond_wait(&hub->dongles[tid % size].cv_dongle,
-				&hub->d_mutex);
-		grab_dongle_edf(hub, tid, tid % size);
-		grabbed++;
-	}
-	return (grabbed);
+	pthread_mutex_unlock(&dongles[uid].mutex);
+	return (ret);
 }

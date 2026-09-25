@@ -91,6 +91,7 @@ Example:
 The implementation prevents **Coffman's conditions** to prevent deadlock:
 
 1. **Mutual Exclusion**: Each dongle is protected by a mutex; only one coder can hold it at a time.
+2. **Hold and wait or resource holding**: Coders will try to obtain 2 dongles, and if failed to obtain at least one dongle, they will release it immediately.
 3. **No Preemption**: Dongles are released voluntarily after compilation completes.
 4. **Circular Wait**: Eliminated by each coder trying to grab 2 dongles at the same time.
 
@@ -112,11 +113,11 @@ The implementation prevents **Coffman's conditions** to prevent deadlock:
 ## Thread Synchronization Mechanisms
 
 ### pthread_mutex_t
-- **Dongle mutexes**: Mutex for dongles protects access to dongle resource.
 - **Log mutex**: Serializes all output to prevent interleaved messages.
+- **Array mutex**: Controlls access to burnout time, preventing the access of other threads while a thread is writing.
+- **Signal mutex**: Controlls access to termination signal, which will have value of 1 when the program should be terminated.
 
-### pthread_cond_t
-- **Dongle prioritization condition variables**: Each dongle has a condvar for waiting coders. When a dongle becomes available or cooldown ends, `pthread_cond_t cv;` is broadcasted.
+- **Queue mutex**: Controlls access to priority queue of the dongle, and each dongle have this mutex.s
 
 ### Priority Queue (Custom Heap Implementation)
 - No standard library priority queue is used.
@@ -133,6 +134,7 @@ The implementation prevents **Coffman's conditions** to prevent deadlock:
 - [Multithreaded Programming Guide](https://docs.oracle.com/cd/E37838_01/html/E61057/index.html) - Guide of thread functions and variables required for this project
 - [Thread Management Functions in C](https://www.geeksforgeeks.org/c/thread-functions-in-c-c/) - Explanation of Thread Management functions in C language
 - [Coffman's conditions for deadlock](https://en.wikipedia.org/wiki/Deadlock_(computer_science))
+- [C Program to Implement Priority Queue](https://www.geeksforgeeks.org/c/c-program-to-implement-priority-queue/) - Introduction and implementation of C priority queue
 
 ### AI Usage
 Ai was used in the following ways for this project:

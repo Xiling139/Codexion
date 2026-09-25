@@ -6,11 +6,26 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/29 16:41:06 by zhewu             #+#    #+#             */
-/*   Updated: 2026/09/18 11:40:18 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/09/25 15:07:51 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
+
+bool	terminated(t_hub *hub)
+{
+	pthread_mutex_lock(&hub->signal_mutex);
+	if (hub->termination_signal == 1)
+	{
+		pthread_mutex_unlock(&hub->signal_mutex);
+		return (true);
+	}
+	else
+	{
+		pthread_mutex_unlock(&hub->signal_mutex);
+		return (false);
+	}
+}
 
 void	compile(t_hub *hub, int tid)
 {
@@ -20,7 +35,9 @@ void	compile(t_hub *hub, int tid)
 	pthread_mutex_lock(&hub->p_mutex);
 	print_logs(hub, 1, tid);
 	pthread_mutex_unlock(&hub->p_mutex);
-	hub->burnout_time[tid - 1] = time_ms + hub->config.time_to_burnout + 1;
+	pthread_mutex_lock(&hub->arr_mutex);
+	hub->burnout_time[tid - 1] = time_ms + hub->config.time_to_burnout;
+	pthread_mutex_unlock(&hub->arr_mutex);
 	usleep(hub->config.time_to_compile * 1000);
 }
 
@@ -52,21 +69,14 @@ int	coder_action(t_hub *hub, int tid)
 
 	size = hub->config.number_of_coders;
 	compile(hub, tid);
-	pthread_mutex_lock(&hub->d_mutex);
-	d_release(hub, tid);
-	pthread_mutex_unlock(&hub->d_mutex);
-	if (hub->config.scheduler == 1)
-	{
-		pthread_cond_broadcast(&hub->dongles[tid - 1].cv_dongle);
-		pthread_cond_broadcast(&hub->dongles[tid % size].cv_dongle);
-	}
-	if (hub->termination_signal == 1)
+	release_dongles(hub, tid);
+	if (terminated(hub))
 		return (-1);
 	debug(hub, tid);
-	if (hub->termination_signal == 1)
+	if (terminated(hub))
 		return (-1);
 	refactor(hub, tid);
-	if (hub->termination_signal == 1)
+	if (terminated(hub))
 		return (-1);
 	return (0);
 }

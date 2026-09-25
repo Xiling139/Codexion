@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/25 11:37:20 by zhewu             #+#    #+#             */
-/*   Updated: 2026/08/15 14:22:10 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/09/25 12:03:42 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,24 +54,30 @@ t_arrmap	min_map(int *array, int size)
 	return (min);
 }
 
-void	broadcast_all(t_hub *hub)
+bool	burnout_check(t_hub *hub, long long time)
 {
-	int	size;
-	int	i;
+	t_arrmap	map;
 
-	size = hub->config.number_of_coders;
-	i = 0;
-	while (i < size)
+	pthread_mutex_lock(&hub->arr_mutex);
+	map = min_map(hub->burnout_time, hub->config.number_of_coders);
+	pthread_mutex_unlock(&hub->arr_mutex);
+	if (map.value < time && map.value >= hub->config.time_to_burnout)
 	{
-		pthread_cond_broadcast(&hub->dongles[i].cv_dongle);
-		i++;
+		pthread_mutex_lock(&hub->p_mutex);
+		printf("%lld %d burned out\n", time, map.index + 1);
+		pthread_mutex_lock(&hub->signal_mutex);
+		hub->termination_signal = 1;
+		pthread_mutex_unlock(&hub->signal_mutex);
+		pthread_mutex_unlock(&hub->p_mutex);
+		return (true);
 	}
+	else
+		return (false);
 }
 
 void	*monitor_run(void *arg)
 {
 	t_hub		*hub;
-	t_arrmap	map;
 	long long	time;
 	int			terminate_count;
 
@@ -80,19 +86,13 @@ void	*monitor_run(void *arg)
 	while (terminate_count < hub->config.number_of_coders)
 	{
 		usleep(1000);
+		pthread_mutex_lock(&hub->arr_mutex);
 		terminate_count = count_array(hub->burnout_time,
 				hub->config.number_of_coders, -1);
+		pthread_mutex_unlock(&hub->arr_mutex);
 		time = gettime_ms(hub->start_time);
-		map = min_map(hub->burnout_time, hub->config.number_of_coders);
-		if (map.value < time && map.value >= hub->config.time_to_burnout)
-		{
-			pthread_mutex_lock(&hub->p_mutex);
-			printf("%lld %d burned out\n", time, map.index + 1);
-			hub->termination_signal = 1;
-			pthread_mutex_unlock(&hub->p_mutex);
-			broadcast_all(hub);
+		if (burnout_check(hub, time))
 			break ;
-		}
 	}
 	return (NULL);
 }

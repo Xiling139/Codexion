@@ -28,7 +28,8 @@ t_dongle	*dongle_initialize(t_config config)
 		dongles[i].available = true;
 		dongles[i].id = i;
 		dongles[i].t_unlock_ms = -1;
-		pthread_cond_init(&dongles[i].cv_dongle, NULL);
+		queue_init(&dongles[i].queue);
+		pthread_mutex_init(&dongles[i].mutex, NULL);
 		i++;
 	}
 	return (dongles);
@@ -46,9 +47,9 @@ t_hub	*hub_setup(t_config config, pthread_t *coders)
 	hub->config = config;
 	hub->coders = coders;
 	hub->termination_signal = 0;
-	pthread_mutex_init(&hub->d_mutex, NULL);
 	pthread_mutex_init(&hub->p_mutex, NULL);
-	pthread_cond_init(&hub->cv, NULL);
+	pthread_mutex_init(&hub->arr_mutex, NULL);
+	pthread_mutex_init(&hub->signal_mutex, NULL);
 	hub->dongles = dongle_initialize(config);
 	hub->burnout_time = init_int_arr(config);
 	if (hub->dongles == NULL || hub->burnout_time == NULL)
@@ -87,16 +88,16 @@ void	release(t_coder_arg *args)
 	hub = args->hub;
 	while (i < hub->config.number_of_coders)
 	{
-		pthread_cond_broadcast(&hub->dongles[i].cv_dongle);
-		pthread_cond_destroy(&hub->dongles[i].cv_dongle);
+		queue_free(&hub->dongles[i].queue);
+		pthread_mutex_destroy(&hub->dongles[i].mutex);
 		i++;
 	}
 	free(hub->dongles);
 	free(hub->coders);
 	free(hub->burnout_time);
-	pthread_mutex_destroy(&hub->d_mutex);
 	pthread_mutex_destroy(&hub->p_mutex);
-	pthread_cond_destroy(&hub->cv);
+	pthread_mutex_destroy(&hub->arr_mutex);
+	pthread_mutex_destroy(&hub->signal_mutex);
 	free(hub);
 	free(args);
 }
