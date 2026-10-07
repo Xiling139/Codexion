@@ -47,6 +47,7 @@ t_hub	*hub_setup(t_config config, pthread_t *coders)
 	hub->config = config;
 	hub->coders = coders;
 	hub->termination_signal = 0;
+	pthread_mutex_init(&hub->d_mutex, NULL);
 	pthread_mutex_init(&hub->p_mutex, NULL);
 	pthread_mutex_init(&hub->arr_mutex, NULL);
 	pthread_mutex_init(&hub->signal_mutex, NULL);
@@ -95,6 +96,7 @@ void	release(t_coder_arg *args)
 	free(hub->dongles);
 	free(hub->coders);
 	free(hub->burnout_time);
+	pthread_mutex_destroy(&hub->d_mutex);
 	pthread_mutex_destroy(&hub->p_mutex);
 	pthread_mutex_destroy(&hub->arr_mutex);
 	pthread_mutex_destroy(&hub->signal_mutex);

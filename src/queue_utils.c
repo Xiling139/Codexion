@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/22 16:47:23 by zhewu             #+#    #+#             */
-/*   Updated: 2026/09/25 14:33:06 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/10/07 18:24:11 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ bool	has_request(t_queue *pq, int tid)
 
 void	queue_init(t_queue *pq)
 {
-	pq->items = malloc(sizeof(t_request) * 2);
+	pq->items = malloc(sizeof(t_request) * 4);
 	pq->size = 0;
 }
 

@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 16:09:31 by zhenming          #+#    #+#             */
-/*   Updated: 2026/09/25 16:03:52 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/10/07 18:05:52 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,9 @@ typedef struct s_hub
 
 	// Mutex for printf
 	pthread_mutex_t	p_mutex;
+
+	// Mutex for dongles
+	pthread_mutex_t	d_mutex;
 
 	// Additional mutexes
 	pthread_mutex_t	arr_mutex;

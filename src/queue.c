@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/22 12:16:56 by zhewu             #+#    #+#             */
-/*   Updated: 2026/09/24 12:51:02 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/10/07 18:23:59 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	heapify_up(t_queue *pq, int index)
 
 void	enqueue(t_queue *pq, t_request request)
 {
-	if (pq->size == 2)
+	if (pq->size == 4)
 		return ;
 	pq->items[pq->size] = request;
 	pq->size++;

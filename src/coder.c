@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/25 11:37:20 by zhewu             #+#    #+#             */
-/*   Updated: 2026/09/25 16:17:42 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/10/07 18:09:58 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,9 @@ void	main_loop(t_hub *hub, int tid)
 		{
 			if (terminated(hub))
 				break ;
+			pthread_mutex_lock(&hub->d_mutex);
 			grabbed += grab_dongles(hub, tid, loops);
+			pthread_mutex_unlock(&hub->d_mutex);
 		}
 		if (coder_action(hub, tid) == -1)
 			break ;
