@@ -43,9 +43,6 @@ void	compile(t_hub *hub, int tid)
 
 void	debug(t_hub *hub, int tid)
 {
-	long long	time_ms;
-
-	time_ms = gettime_ms(hub->start_time);
 	pthread_mutex_lock(&hub->p_mutex);
 	print_logs(hub, 2, tid);
 	pthread_mutex_unlock(&hub->p_mutex);
@@ -54,9 +51,6 @@ void	debug(t_hub *hub, int tid)
 
 void	refactor(t_hub *hub, int tid)
 {
-	long long	time_ms;
-
-	time_ms = gettime_ms(hub->start_time);
 	pthread_mutex_lock(&hub->p_mutex);
 	print_logs(hub, 3, tid);
 	pthread_mutex_unlock(&hub->p_mutex);
@@ -65,9 +59,6 @@ void	refactor(t_hub *hub, int tid)
 
 int	coder_action(t_hub *hub, int tid)
 {
-	int	size;
-
-	size = hub->config.number_of_coders;
 	compile(hub, tid);
 	release_dongles(hub, tid);
 	if (terminated(hub))

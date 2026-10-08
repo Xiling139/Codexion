@@ -16,7 +16,7 @@ void	heapify_up(t_queue *pq, int index)
 {
 	int	parent;
 
-	parent = index - 1 / 2;
+	parent = (index - 1) / 2;
 	if (index != 0 && pq->items[parent].priority > pq->items[index].priority)
 	{
 		swap(&pq->items[parent], &pq->items[index]);
@@ -45,7 +45,7 @@ void	heapify_down(t_queue *pq, int index)
 	if (left < pq->size
 		&& pq->items[left].priority < pq->items[smallest].priority)
 		smallest = left;
-	if (left < pq->size
+	if (right < pq->size
 		&& pq->items[right].priority < pq->items[smallest].priority)
 		smallest = right;
 	if (smallest != index)
