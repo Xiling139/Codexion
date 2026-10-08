@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/25 11:37:20 by zhewu             #+#    #+#             */
-/*   Updated: 2026/10/07 18:09:58 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/10/08 15:58:13 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ int	acquire_fifo(t_hub *hub, int tid, int uid)
 
 	ret = 0;
 	dongles = hub->dongles;
-	pthread_mutex_lock(&dongles[uid].mutex);
 	if (!has_request(&dongles[uid].queue, tid))
 	{
 		enqueue(&dongles[uid].queue,
@@ -27,11 +26,9 @@ int	acquire_fifo(t_hub *hub, int tid, int uid)
 	}
 	else if (dongle_available(hub, uid) && peek(&dongles[uid].queue).tid == tid)
 	{
-		dequeue(&dongles[uid].queue);
 		hub->dongles[uid].available = false;
 		ret = 1;
 	}
-	pthread_mutex_unlock(&dongles[uid].mutex);
 	return (ret);
 }
 
@@ -49,8 +46,10 @@ int	acquire(t_hub *hub, int tid, int uid, int loops)
 
 int	grab_dongles(t_hub *hub, int tid, int loops)
 {
-	int	size;
+	int			size;
+	t_dongle	*dongles;
 
+	dongles = hub->dongles;
 	size = hub->config.number_of_coders;
 	if (acquire(hub, tid, tid - 1, loops) == 0)
 		return (0);
@@ -59,6 +58,8 @@ int	grab_dongles(t_hub *hub, int tid, int loops)
 		d_release(hub, tid - 1, false);
 		return (0);
 	}
+	dequeue(&dongles[tid - 1].queue);
+	dequeue(&dongles[tid % size].queue);
 	pthread_mutex_lock(&hub->p_mutex);
 	print_logs(hub, 0, tid);
 	print_logs(hub, 0, tid);
