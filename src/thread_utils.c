@@ -6,21 +6,24 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/24 14:58:23 by zhewu             #+#    #+#             */
-/*   Updated: 2026/10/20 15:08:57 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/10/20 15:54:34 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-bool	dongle_available(t_hub *hub, int index)
+bool	dongle_available(t_hub *hub, int uid)
 {
 	long long	time;
-	t_dongle	dongle;
 
-	dongle = hub->dongles[index];
 	time = gettime_ms(hub->start_time);
-	if (!dongle.available || dongle.t_unlock_ms >= time)
+	pthread_mutex_lock(&hub->dongles[uid].mutex);
+	if (!hub->dongles[uid].available || hub->dongles[uid].t_unlock_ms >= time)
+	{
+		pthread_mutex_unlock(&hub->dongles[uid].mutex);
 		return (false);
+	}
+	pthread_mutex_unlock(&hub->dongles[uid].mutex);
 	return (true);
 }
 

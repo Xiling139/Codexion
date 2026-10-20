@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 16:09:31 by zhenming          #+#    #+#             */
-/*   Updated: 2026/10/20 15:29:29 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/10/20 15:49:43 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ long long			*init_long_arr(t_config config);
 
 // Thread utils
 long long			gettime_ms(struct timeval origin);
-bool				dongle_available(t_hub *hub, int index);
+bool				dongle_available(t_hub *hub, int uid);
 void				d_release(t_hub *hub, int uid, bool used);
 void				release_dongles(t_hub *hub, int tid);
 void				wait_threads(t_hub *hub);

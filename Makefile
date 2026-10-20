@@ -1,11 +1,13 @@
 NAME    := codexion
-CC		:= cc -g
+CC		:= cc
 CFLAGS  := -Wall -Wextra -Werror -pthread
 RM      := rm -rf
 INC		:= -I include
 
 # ThreadSanitizer flags for leak check
-TSAN_FLAGS	:=	-fsanitize=thread
+ASAN_FLAGS	:=	-g -fsanitize=address
+LSAN_FLAGS	:=	-g -fsanitize=leak
+TSAN_FLAGS	:=	-g -fsanitize=thread
 
 # directories
 BUILD_DIR 	:=	build
