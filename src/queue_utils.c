@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/22 16:47:23 by zhewu             #+#    #+#             */
-/*   Updated: 2026/10/07 18:24:11 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/10/18 11:02:10 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,4 @@ bool	has_request(t_queue *pq, int tid)
 		i++;
 	}
 	return (false);
-}
-
-void	queue_init(t_queue *pq)
-{
-	pq->items = malloc(sizeof(t_request) * 4);
-	pq->size = 0;
-}
-
-void	queue_free(t_queue *pq)
-{
-	free(pq->items);
 }
