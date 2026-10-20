@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 16:09:31 by zhenming          #+#    #+#             */
-/*   Updated: 2026/10/20 15:49:43 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/10/20 16:19:52 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ typedef struct s_request
 
 typedef struct s_queue
 {
-	t_request		items[2];
+	t_request		items[4];
 	int				size;
 }					t_queue;
 

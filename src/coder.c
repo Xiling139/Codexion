@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/25 11:37:20 by zhewu             #+#    #+#             */
-/*   Updated: 2026/10/18 11:32:30 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/10/20 16:40:24 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	acquire_fifo(t_hub *hub, int tid, int uid)
 		enqueue(&dongles[uid].queue,
 			(t_request){.priority = gettime_ms(hub->start_time), .tid = tid});
 	}
-	else if (dongle_available(hub, uid) && peek(&dongles[uid].queue).tid == tid)
+	if (dongle_available(hub, uid) && peek(&dongles[uid].queue).tid == tid)
 	{
 		hub->dongles[uid].available = false;
 		ret = 1;
@@ -48,7 +48,14 @@ int	grab_dongles(t_hub *hub, int tid, int loops)
 	dongles = hub->dongles;
 	size = hub->config.number_of_coders;
 	if (acquire(hub, tid, tid - 1, loops) == 0)
+	{
+		if (!has_request(&dongles[tid % size].queue, tid)
+			&& hub->config.scheduler == 0)
+			enqueue(&dongles[tid % size].queue,
+				(t_request){.priority = gettime_ms(hub->start_time),
+				.tid = tid});
 		return (0);
+	}
 	if (acquire(hub, tid, tid % size, loops) == 0)
 	{
 		d_release(hub, tid - 1, false);
@@ -56,10 +63,8 @@ int	grab_dongles(t_hub *hub, int tid, int loops)
 	}
 	dequeue(&dongles[tid - 1].queue);
 	dequeue(&dongles[tid % size].queue);
-	pthread_mutex_lock(&hub->p_mutex);
 	print_logs(hub, 0, tid);
 	print_logs(hub, 0, tid);
-	pthread_mutex_unlock(&hub->p_mutex);
 	return (2);
 }
 
