@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 16:09:31 by zhenming          #+#    #+#             */
-/*   Updated: 2026/10/20 15:22:36 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/10/20 15:29:29 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,9 +102,10 @@ bool				has_request(t_queue *pq, int tid);
 int					setup(t_config config);
 
 // Resource free
-void	hub_free_partial(t_hub *hub);
-void	release(t_coder_arg *args);
-void	join_and_release(pthread_t *threads, t_coder_arg *args, int n);
+void				hub_free_partial(t_hub *hub);
+void				release(t_coder_arg *args);
+void				join_and_release(pthread_t *threads, t_coder_arg *args,
+						int n);
 
 // Thread functions
 void				*coder(void *arg);
