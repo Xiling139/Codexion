@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 16:09:31 by zhenming          #+#    #+#             */
-/*   Updated: 2026/10/07 18:05:52 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/10/20 15:22:36 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ typedef struct s_request
 
 typedef struct s_queue
 {
-	t_request		*items;
+	t_request		items[2];
 	int				size;
 }					t_queue;
 
@@ -61,7 +61,7 @@ typedef struct s_dongle
 typedef struct s_hub
 {
 	int				termination_signal;
-	int				*burnout_time;
+	long long		*burnout_time;
 	struct timeval	start_time;
 	t_dongle		*dongles;
 	t_config		config;
@@ -88,7 +88,7 @@ typedef struct s_coder_arg
 typedef struct s_arrmap
 {
 	int				index;
-	int				value;
+	long long		value;
 }					t_arrmap;
 
 // Priority Queue
@@ -96,12 +96,15 @@ void				enqueue(t_queue *pq, t_request request);
 t_request			dequeue(t_queue *pq);
 t_request			peek(t_queue *pq);
 void				swap(t_request *a, t_request *b);
-void				queue_init(t_queue *pq);
-void				queue_free(t_queue *pq);
 bool				has_request(t_queue *pq, int tid);
 
 // Core functions
 int					setup(t_config config);
+
+// Resource free
+void	hub_free_partial(t_hub *hub);
+void	release(t_coder_arg *args);
+void	join_and_release(pthread_t *threads, t_coder_arg *args, int n);
 
 // Thread functions
 void				*coder(void *arg);
@@ -122,7 +125,7 @@ bool				terminated(t_hub *hub);
 bool				is_number(char *str);
 bool				overflow(char *nbr);
 char				*str_to_upper(char *str);
-int					*init_int_arr(t_config config);
+long long			*init_long_arr(t_config config);
 
 // Thread utils
 long long			gettime_ms(struct timeval origin);
