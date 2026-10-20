@@ -28,7 +28,7 @@ t_dongle	*dongle_initialize(t_config config)
 		dongles[i].available = true;
 		dongles[i].id = i;
 		dongles[i].t_unlock_ms = -1;
-		queue_init(&dongles[i].queue);
+		dongles[i].queue.size = 0;
 		pthread_mutex_init(&dongles[i].mutex, NULL);
 		i++;
 	}
@@ -43,7 +43,7 @@ t_hub	*hub_setup(t_config config, pthread_t *coders)
 	if (!hub)
 		return (NULL);
 	if (gettimeofday(&hub->start_time, NULL) == -1)
-		return (NULL);
+		return (free(hub), NULL);
 	hub->config = config;
 	hub->coders = coders;
 	hub->termination_signal = 0;
@@ -52,9 +52,9 @@ t_hub	*hub_setup(t_config config, pthread_t *coders)
 	pthread_mutex_init(&hub->arr_mutex, NULL);
 	pthread_mutex_init(&hub->signal_mutex, NULL);
 	hub->dongles = dongle_initialize(config);
-	hub->burnout_time = init_int_arr(config);
+	hub->burnout_time = init_long_arr(config);
 	if (hub->dongles == NULL || hub->burnout_time == NULL)
-		return (NULL);
+		return (hub_free_partial(hub), NULL);
 	return (hub);
 }
 
@@ -69,7 +69,7 @@ t_coder_arg	*arg_setup(t_config config, pthread_t *coders, int size)
 		return (NULL);
 	hub = hub_setup(config, coders);
 	if (!hub)
-		return (NULL);
+		return (free(args), NULL);
 	i = 0;
 	while (i < size)
 	{
@@ -78,30 +78,6 @@ t_coder_arg	*arg_setup(t_config config, pthread_t *coders, int size)
 		i++;
 	}
 	return (args);
-}
-
-void	release(t_coder_arg *args)
-{
-	t_hub	*hub;
-	int		i;
-
-	i = 0;
-	hub = args->hub;
-	while (i < hub->config.number_of_coders)
-	{
-		queue_free(&hub->dongles[i].queue);
-		pthread_mutex_destroy(&hub->dongles[i].mutex);
-		i++;
-	}
-	free(hub->dongles);
-	free(hub->coders);
-	free(hub->burnout_time);
-	pthread_mutex_destroy(&hub->d_mutex);
-	pthread_mutex_destroy(&hub->p_mutex);
-	pthread_mutex_destroy(&hub->arr_mutex);
-	pthread_mutex_destroy(&hub->signal_mutex);
-	free(hub);
-	free(args);
 }
 
 int	setup(t_config config)
@@ -117,14 +93,16 @@ int	setup(t_config config)
 		return (-1);
 	args = arg_setup(config, threads, size);
 	if (!args)
-		return (-1);
+		return (free(threads), -1);
 	i = 0;
 	while (i < config.number_of_coders)
 	{
-		pthread_create(&threads[i], NULL, coder, (void *)&args[i]);
+		if (pthread_create(&threads[i], NULL, coder, &args[i]) != 0)
+			return (join_and_release(threads, args, i), -1);
 		i++;
 	}
-	pthread_create(&threads[i], NULL, monitor_run, (void *)&args[i]);
+	if (pthread_create(&threads[i], NULL, monitor_run, (void *)&args[i]) != 0)
+		return (join_and_release(threads, args, i), -1);
 	wait_threads(args->hub);
 	release(args);
 	return (0);
