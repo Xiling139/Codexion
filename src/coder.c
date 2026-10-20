@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/25 11:37:20 by zhewu             #+#    #+#             */
-/*   Updated: 2026/10/08 15:58:13 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/10/18 11:32:30 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,6 @@ int	acquire_fifo(t_hub *hub, int tid, int uid)
 
 int	acquire(t_hub *hub, int tid, int uid, int loops)
 {
-	if (hub->config.scheduler == 0)
-		return (acquire_fifo(hub, tid, uid));
-	else
-		return (acquire_edf(hub, tid, uid, loops));
 	if (hub->config.scheduler == 0)
 		return (acquire_fifo(hub, tid, uid));
 	else
@@ -84,6 +80,8 @@ void	main_loop(t_hub *hub, int tid)
 			grabbed += grab_dongles(hub, tid, loops);
 			pthread_mutex_unlock(&hub->d_mutex);
 		}
+		if (terminated(hub))
+			break ;
 		if (coder_action(hub, tid) == -1)
 			break ;
 		loops++;

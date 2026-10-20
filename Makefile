@@ -25,6 +25,7 @@ SRCS	:= $(SRC_DIR)/main.c \
 			$(SRC_DIR)/coder_action.c \
 			$(SRC_DIR)/coderedf.c \
 			$(SRC_DIR)/errors.c \
+			$(SRC_DIR)/free.c \
 			$(SRC_DIR)/monitor.c \
 			$(SRC_DIR)/queue.c \
 			$(SRC_DIR)/queue_utils.c \

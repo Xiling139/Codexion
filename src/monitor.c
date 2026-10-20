@@ -6,13 +6,13 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/25 11:37:20 by zhewu             #+#    #+#             */
-/*   Updated: 2026/09/25 12:03:42 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/10/18 12:34:34 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-int	count_array(int *array, int size, int target)
+int	count_array(long long *array, int size, int target)
 {
 	int	count;
 	int	i;
@@ -28,7 +28,7 @@ int	count_array(int *array, int size, int target)
 	return (count);
 }
 
-t_arrmap	min_map(int *array, int size)
+t_arrmap	min_map(long long *array, int size)
 {
 	int			i;
 	t_arrmap	min;

@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/24 14:58:23 by zhewu             #+#    #+#             */
-/*   Updated: 2026/09/25 16:04:08 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/10/20 15:08:57 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ bool	dongle_available(t_hub *hub, int index)
 
 	dongle = hub->dongles[index];
 	time = gettime_ms(hub->start_time);
-	if (!dongle.available || dongle.t_unlock_ms > time)
+	if (!dongle.available || dongle.t_unlock_ms >= time)
 		return (false);
 	return (true);
 }

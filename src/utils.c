@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/24 16:53:51 by zhenming          #+#    #+#             */
-/*   Updated: 2026/06/13 12:19:14 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/10/18 12:42:55 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ bool	is_number(char *str)
 		if (ft_isdigit(str[i]) == 0)
 		{
 			if (!(str[i] == '-' && ft_isdigit(str[i + 1]) != 0))
+				return (false);
+			if (str[i] == '-' && i != 0)
 				return (false);
 		}
 		i++;
@@ -75,14 +77,14 @@ char	*str_to_upper(char *str)
 	return (new_str);
 }
 
-int	*init_int_arr(t_config config)
+long long	*init_long_arr(t_config config)
 {
-	int	*arr;
-	int	size;
-	int	i;
+	long long	*arr;
+	int			size;
+	int			i;
 
 	size = config.number_of_coders;
-	arr = (int *)malloc(sizeof(int) * size);
+	arr = (long long *)malloc(sizeof(long long) * size);
 	if (!arr)
 		return (NULL);
 	i = 0;

@@ -6,7 +6,7 @@
 /*   By: zhewu <zhewu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/29 16:41:06 by zhewu             #+#    #+#             */
-/*   Updated: 2026/09/25 15:07:51 by zhewu            ###   ########.fr       */
+/*   Updated: 2026/10/20 15:10:53 by zhewu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ void	compile(t_hub *hub, int tid)
 {
 	long long	time_ms;
 
-	time_ms = gettime_ms(hub->start_time);
 	pthread_mutex_lock(&hub->p_mutex);
+	time_ms = gettime_ms(hub->start_time);
 	print_logs(hub, 1, tid);
 	pthread_mutex_unlock(&hub->p_mutex);
 	pthread_mutex_lock(&hub->arr_mutex);
